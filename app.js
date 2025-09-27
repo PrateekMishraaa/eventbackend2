@@ -1,21 +1,18 @@
+// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
-const router = require("./routes/registration");
 
 dotenv.config();
 
 const app = express();
 
-
+// --------------------- CORS Setup ---------------------
 const allowedOrigins = [
- "https://eventbackend-alpha.vercel.app/",
-//  "http://157.173.222.125:6001",
-//  "http://157.173.222.125:6000/",
-//  "http://157.173.222.125:6001/",
- 
+  "https://eventbackend-alpha.vercel.app", // frontend URL
+  // "http://localhost:3000", // uncomment during local dev if needed
 ];
 
 app.use(cors({
@@ -29,48 +26,47 @@ app.use(cors({
   credentials: true
 }));
 
-
-
-// app.use(cors()); 
-  
+// --------------------- Middleware ---------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve uploaded files
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+// --------------------- Routes ---------------------
+// Test route
+app.get("/", (req, res) => {
+  console.log("Server is running");
+  res.send("Hello Pandit Ji");
+});
 
-app.get("/",(req,res)=>{
-  console.log("hello world")
-  res.send("hello pandit ji")
-})
-
-// Routes
+// Auth routes
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
-app.use("/api", router);
 
+// Registration routes
+const registrationRoutes = require("./routes/registration");
+app.use("/api", registrationRoutes);
+
+// Poster registration routes
 const registerRoutePoster = require("./routes/registerRoutePoster");
 app.use("/api/poster", registerRoutePoster);
 
-const registrationRoutes = require("./routes/registration");  
-app.use("/api", registrationRoutes);
-
+// Bulk registration routes
 const bulkRegisterRoute = require("./routes/bulkRegister");
-
 app.use("/api/bulk-register", bulkRegisterRoute);
 
-// MongoDB
+// --------------------- MongoDB Connection ---------------------
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
 })
-
 .then(() => console.log("MongoDB connected"))
-.catch(err => console.error("Mongo error:", err));
+.catch(err => console.error("MongoDB connection error:", err));
 
-console.log("mongouri",process.env.MONGO_URI)
+console.log("Mongo URI:", process.env.MONGO_URI);
 
+// --------------------- Start Server ---------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
