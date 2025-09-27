@@ -11,7 +11,7 @@ const app = express();
 
 
 const allowedOrigins = [
- "http://localhost:5000/",
+ "https://eventbackend-alpha.vercel.app/",
 //  "http://157.173.222.125:6001",
 //  "http://157.173.222.125:6000/",
 //  "http://157.173.222.125:6001/",
