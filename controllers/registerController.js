@@ -382,6 +382,7 @@ const getAllRegistrationsData = async (req, res) => {
     console.log("Fetching all registrations from DB...");
 
     const registrations = await Registration.find({}).sort({ createdAt: -1 });
+    console.log("registration",registrations)
 
     if (!registrations || registrations.length === 0) {
       return res.status(404).json({
@@ -404,6 +405,7 @@ const getAllRegistrationsData = async (req, res) => {
     });
   }
 };
+
 
 // Get registration by email
 const getRegistrationByEmail = async (req, res) => {
